@@ -28,7 +28,15 @@ class CreatePostNode(SQLAlchemyObjectType):
         id = ID(required=True)
         title=String(required=True)
         description=String(require=True)
-        user_ud = Int(required=True)
+        user_id = Int(required=True)
 
-        def mutate(self, info, id, title, description, user_ud):
-            pass
+        def mutate(self, info, id, title, description, user_id):
+            db = get_db()
+            post = Post(id=id, title=title, description=description, user_id=user_id)
+            db.add(post)
+            db.commit()
+            db.refresh(post)
+            return CreatePostNode(post=post)
+
+class UpdatePostNode(SQLAlchemyObjectType):
+    pass
