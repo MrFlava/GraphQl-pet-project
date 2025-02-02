@@ -39,4 +39,30 @@ class CreatePostNode(SQLAlchemyObjectType):
             return CreatePostNode(post=post)
 
 class UpdatePostNode(SQLAlchemyObjectType):
+    post = Field(lambda: PostNode)
+
+    class Arguments:
+        id = ID(required=True)
+        title=String(required=True)
+        description=String(required=True)
+        user_id = Int(required=True)
+
+        def mutate(self, info, post_id, title, description, user_id):
+            db = get_db()
+            post_for_update = Post.query.get(Post.id == post_id, Post.user_id == user_id).first()
+
+            if not post_for_update:
+                 raise Exception('Post not found')
+
+            if title:
+                post_for_update.title = title
+
+            if description:
+                post_for_update.description = description
+
+            db.commit()
+            db.refresh(post_for_update)
+            return UpdatePostNode(post_for_update=post_for_update)
+
+class DeletePostNode(SQLAlchemyObjectType):
     pass
