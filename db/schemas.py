@@ -65,4 +65,19 @@ class UpdatePostNode(SQLAlchemyObjectType):
             return UpdatePostNode(post_for_update=post_for_update)
 
 class DeletePostNode(SQLAlchemyObjectType):
-    pass
+    success = Field(lambda: String)
+
+    class Arguments:
+        id = ID(required=True)
+
+    def mutate(self, info, post_id):
+        db = get_db()
+
+        post = db.query(Post).filter(Post.id == post_id).first()
+
+        if not post:
+            raise Exception('Post not found')
+
+        db.delete(post)
+        db.commit()
+        return DeletePostNode(success=f'Post with id {post_id} deleted successfully')
