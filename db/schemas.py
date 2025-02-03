@@ -15,7 +15,17 @@ class UserNode(SQLAlchemyObjectType):
 
 class CreateUserNode(SQLAlchemyObjectType):
     class Arguments:
-        pass
+        id = ID(required=True)
+        email = String(required=True)
+        password = String(required=True)
+
+        def mutate(self, id, username, password,):
+            db = get_db()
+            user = User(id=id, username=username, password=password)
+            db.add(user)
+            db.commit()
+            db.refresh(user)
+            return CreateUserNode(user=user)
 
 
 class PostNode(SQLAlchemyObjectType):
@@ -41,7 +51,7 @@ class CreatePostNode(SQLAlchemyObjectType):
         description=String(require=True)
         user_id = Int(required=True)
 
-        def mutate(self, info, id, title, description, user_id):
+        def mutate(self, id, title, description, user_id):
             db = get_db()
             post = Post(id=id, title=title, description=description, user_id=user_id)
             db.add(post)
@@ -58,7 +68,7 @@ class UpdatePostNode(SQLAlchemyObjectType):
         description=String(required=True)
         user_id = Int(required=True)
 
-        def mutate(self, info, post_id, title, description, user_id):
+        def mutate(self, post_id, title, description, user_id):
             db = get_db()
             post_for_update = Post.query.get(Post.id == post_id, Post.user_id == user_id).first()
 
@@ -81,7 +91,7 @@ class DeletePostNode(SQLAlchemyObjectType):
     class Arguments:
         id = ID(required=True)
 
-    def mutate(self, info, post_id):
+    def mutate(self, post_id):
         db = get_db()
 
         post = db.query(Post).filter(Post.id == post_id).first()
