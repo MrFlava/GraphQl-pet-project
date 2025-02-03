@@ -7,6 +7,17 @@ from pkg_resources import require
 from .db_utils import get_db
 from .models import User, Post
 
+class UserNode(SQLAlchemyObjectType):
+    class Meta:
+        model = User
+        interfaces = (ObjectType,)
+
+
+class CreateUserNode(SQLAlchemyObjectType):
+    class Arguments:
+        pass
+
+
 class PostNode(SQLAlchemyObjectType):
     class Meta:
         model = Post
