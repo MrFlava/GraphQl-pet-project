@@ -1,7 +1,6 @@
 import graphene
 
 #TODO:
-# 2. Create schemas;
 # 3. Create auth;
 # 4. Create CRUD endpoints for Post model
 # 5. Create Readme.md
