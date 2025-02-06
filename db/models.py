@@ -1,20 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
+from masoniteorm.models import Model
+from masoniteorm.relationships import has_many
 
-Base = declarative_base()
-
-class User(Base):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True)
-    password = Column(String)
-
-class Post(Base):
-    __tablename__ = 'post'
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    description = Column(String)
-
-    user_id = Column(Integer, ForeignKey('user.id'))
+class Post(Model):
+    """Post Model"""
 
 
+class User(Model):
+    """User Model"""
+
+    @has_many("id", "user_id")
+    def posts(self):
+        return Post
