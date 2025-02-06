@@ -1,18 +1,11 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from masoniteorm.connections import ConnectionResolver
 
-from .models import Base
+DATABASES = {
+    "default": "sqlite",
+    "sqlite": {
+        "driver": "sqlite",
+        "database": "db.sqlite3",
+    }
+}
 
-DATABASE_URI = "sqlite:///./posts.db"
-
-engine = create_engine(DATABASE_URI)
-Base.metadata.create_all(bind=engine)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+DB = ConnectionResolver().set_connection_details(DATABASES)
