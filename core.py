@@ -19,5 +19,18 @@ class CreateMutation:
         user.password = crypt.crypt(user_data.password)
 
         user.save()
-
         return user
+
+    def add_post(self, post_data: PostInput):
+        user = User.find(post_data.user_id)
+
+        if not user:
+            raise Exception(f"User {post_data.user_id} does not exist")
+
+        post = Post()
+        post.user_id = user.id
+        post.title = post_data.title
+        post.description = post_data.description
+
+        post.save()
+        return post
