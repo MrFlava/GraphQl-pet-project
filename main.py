@@ -1,18 +1,20 @@
-import graphene
+import strawberry
+from fastapi import FastAPI
+from strawberry.fastapi import GraphQLRouter
+
+from core import Mutation, Query
 
 #TODO:
 # 3. Create auth;
 # 4. Create CRUD endpoints for Post model
 # 5. Create Readme.md
 
-
-class Query(graphene.ObjectType):
-  hello = graphene.String(name=graphene.String(default_value="World"))
-
-  def resolve_hello(self, info, name):
-    return 'Hello ' + name
+schema = strawberry.Schema(query=Query, mutation=Mutation)
+graphql_app = GraphQLRouter(schema)
+app = FastAPI()
+app.include_router(graphql_app, prefix="/graphql")
 
 
-schema = graphene.Schema(query=Query)
-result = schema.execute('{ hello }')
-print(result.data['hello'])
+@app.get("/")
+def ping():
+    return {"ping": "pong"}
